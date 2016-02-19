@@ -2,7 +2,7 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 require('datejs');
 
-var $ = cheerio.load(fs.readFileSync('take4.html'));
+var $ = cheerio.load(fs.readFileSync('zotero_report.html'));
 
 var title, release, rating;
 var json = { nodes : [], links : [], errors: []};
