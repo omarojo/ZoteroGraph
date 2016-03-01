@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=620">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.slidereveal.min.js"></script>
+    <!-- ThreeJs -->
+    <script src="js/threejs/three.min.js"></script>
+    <script src="js/threejs/controls/FlyControls.js"></script>
+    <script src="js/threejs/Projector.js"></script>
+    <script src="js/graphApp.js"></script>
+    <script type="text/javascript" src="js/dragndrop.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+  </head>
+
+  <link rel="stylesheet" type="text/css" href="css/glassCast.css">
+  <script>
+  var detailsPanel;
+  $().ready(function(){
+    detailsPanel = $('#nodeDetailsPanel').slideReveal({
+      push: false
+
+    });
+
+
+  });
+
+  </script>
+</head>
+<body>
+<div id="entireWebsiteContainer">
+  <div id='nodeDetailsPanel'></div>
+  <div id='landingPage'>
+      <div class="container">
+        <div class="sigla">Welcome to
+          <strong>Glass Cast</strong>
+        </div>
+        <p class="testo2">
+          <strong>Visualize your research</strong>
+        </p>
+
+        <div class="spot">
+            <div id="holder">
+              <center>
+                <p id="status">Please use Chrome instead.</p>
+              </center>
+            </div>
+          <p class="testo">
+
+          </p>
+          <p ></p>
+          <p ></p>
+        </div>
+        <img src="img/fondo.png" alt="" align="center" style="max-width:960px;"/>
+        <hr/>
+        <p></p>
+
+        <!-- BOX CENTRAL -->
+        <p class="testo2">Do not have a Zotero report? Create one</p>
+        <div id="box">
+          <div class="box_img"><img src="https://www.zotero.org/static/images/theme/zotero_theme/zotero_128.png" width="128" height="128"/>
+          </div>
+
+          <div>
+            <h3>
+              <span class="box_title">Download Zotero</span>
+            </h3>
+          </div>
+          <div class="box_text">
+            <p>Zotero is a powerful open access citation manager.
+              <strong>
+                <a href="https://www.zotero.org" target="_blank">
+                  Download it here
+                </a>
+              </strong>
+              and get familiar with it</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="box">
+        <div class="box_img"><img src="img/collection.png"/></div>
+        <div>
+          <h3>
+            <span class="box_title">Create a collection</span>
+          </h3>
+        </div>
+
+        <div class="box_text">You can visualize several different document databases by using individual collections. You can use Glass Cast to visualize and navigate within a single paper or an entire thesis</div>
+      </div>
+      <div id="box">
+        <div class="box_img"><img src="img/tagsrelated.png"/></div>
+        <div>
+          <h3>
+            <span class="box_title">Annotate, tag and relate
+            </span>
+          </h3>
+        </div>
+
+        <div class="box_text">Use Zotero tabs to categorize and connect your documents. Use
+          <strong>TAGS</strong>
+          to categorize your information consistently. Use the
+          <strong>RELATED</strong>
+          tab to generate explicit or implicit connections between the documents.
+          <br/>
+        </div>
+      </div>
+
+      <div id="box">
+        <div>
+          <div>
+            <div class="box_img"><img src="img/report.png"/></div>
+            <div>
+              <div>
+                <h3>
+                  <span class="box_title">Generate a report</span>
+                </h3>
+              </div>
+              <div class="box_text">
+                <p>Right-click on your collection to generate a Zotero report. This report will contain all the data that you provided<br/>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="clear:both;"></div>
+      </p>
+
+      <!-- START IMAGE -->
+      <div class="img_01">
+        <div class="image01"><img src="img/sample.png" alt=""/></div>
+      </div>
+
+      <div style="clear:both;"></div>
+
+      <!-- FOOTER -->
+
+      <div id="footer">
+
+        <div class="container">
+          <p class="testo2">Credits and acknowledgements</p>
+        </div>
+
+        <div class="banner_centrale">
+          <table class="box_text" cellpadding="15px">
+            <tr>
+              <td>
+                <p>"But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder
+                  of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who
+                  loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious
+                  physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"</p>
+              </td>
+              <td>"But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder
+                of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who
+                loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious
+                physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"</td>
+            </tr>
+          </table>
+        </div>
+
+        <p>
+          <a href="https://www.facebook.com/zagographic" target="_blank"><img src="http://singlepage-template.zagographic.it/img/ico/facebook-Icon.png"/></a>
+
+          <a href="https://www.google.it/search?q=zagographic&oq=zagographic&aqs=chrome..69i57j69i60l3j69i61j69i65.2798j0j4&sourceid=chrome&espv=210&es_sm=91&ie=UTF-8" target="_blank"><img src="http://singlepage-template.zagographic.it/img/ico/Google-plus-icon.png" width="56" height="56"/></a>
+          <a href="mailto:info@zagographic.it"><img src="http://singlepage-template.zagographic.it/img/ico/Email-Icon.png" width="56" height="56"/></a>
+        </p>
+      </div>
+
+      <!-- DOWNLOAD TEXT -->
+
+      <div align="center">
+        <p class="download_bt" align="center">
+          <a href="#">DOWNLOAD (0.9 MB)</a>
+        </p>
+      </div>
+
+      <div style="clear:both;"></div>
+    </div> <!--- end of landingPage container -->
+  </div> <!--end of ENTIRE WEBSITE CONTAINER -->
+</body>
+
+</html>
