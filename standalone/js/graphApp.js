@@ -151,6 +151,8 @@ function initGraph(scrappedJson){
 	//   // Parse JSON string into object
 	//     jsonReport = JSON.parse(response);
   //
+
+  //  Nodes must be created first.
 	    createNodes();
 	    createEdges();
 	//  });
@@ -166,17 +168,29 @@ function createNodes(){
 		var nodeSize = 10;//Math.ceil((Math.random() * 100));
 		if(jsonReport.nodes[i].unixtime < -5333097500)
 			nodeSize = 40;
+
+      //This should be optimized.. this info should be processed in the scrapper instead of here.
+      var nodeReferencesCount = 0;
+      jsonReport.links.forEach(function(li){
+        if(li.source_id == jsonReport.nodes[i].id){
+          nodeReferencesCount++;
+        }
+      });
+      nodeSize = nodeSize + nodeReferencesCount;//(nodeReferencesCount * 0.2);
 	    var nodeGeometry = new THREE.SphereGeometry(nodeSize,30,30);
-	    var nodeMaterial = new THREE.MeshBasicMaterial({color: new THREE.Color( 0xffffff ), wireframe: true, wireframeLinewidth: 2.0, fog: true});
-	    var node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+      var nodeMaterial = new THREE.MeshBasicMaterial({color: new THREE.Color( 0xffffff ), wireframe: true, wireframeLinewidth: 2.0, fog: true});
+
+
+      var node = new THREE.Mesh(nodeGeometry, nodeMaterial);
 
 
 	    node.position.x= Math.random() * 2000 - 1000;
 	    node.position.y= jsonReport.nodes[i].unixtime  * 0.00001 * 0.1;//* 0.000001 * 0.2;
 	    node.position.z= Math.random() * 2000 - 1000;
 
-		node.userData.info = jsonReport.nodes[i];
-    node.userData.info.links = [];
+		  node.userData.info = jsonReport.nodes[i];
+      node.userData.info.links = [];
+      node.userData.info.related = [];
 	    nodes.push(node);
 	    scene.add(node);
 	}
@@ -199,7 +213,8 @@ function createEdges(){
 	                                                           opacity: 0.15,
 	                                                           transparent: true } ) );
 
-    nodes[jsonReport.links[i].source].userData.info.links.push(line);
+    nodes[jsonReport.links[i].source].userData.info.links.push(line); // Saving its links objects
+    nodes[jsonReport.links[i].source].userData.info.related.push(nodes[jsonReport.links[i].target]); //Saving it's related object Meshes
 		edges.push(line);
 	 	scene.add(line);
 
@@ -211,9 +226,16 @@ function createEdges(){
 function showNodeDetails(nodeData){
     detailsPanel.slideReveal("show");
     detailsPanel.innerHTML = nodeData.name;
-    detailsPanel.html(nodeData.name + "<br><br>" +
+    var htmlText = nodeData.name + "<br><br>" +
                       nodeData.author + "<br><br>" +
-                      nodeData.date );
+                      nodeData.date + "<br><br> Related:<br>";
+
+    for(var i=0; i<nodeData.related.length; i++){
+      htmlText = htmlText + "- "+ nodeData.related[i].userData.info.name + " [" +nodeData.related[i].userData.info.date + "] <br><br>";
+    }
+
+    detailsPanel.html(htmlText);
+
 
 
 

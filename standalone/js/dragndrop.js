@@ -47,7 +47,7 @@ $().ready(function(){
 
         reference.id = rId;
         reference.name = rTitle;
-
+        reference.author = [];
         //Add all other properties
         metaData.each(function(index,row){
           var th = $(row).find("th").html(); //property name (key)
@@ -62,12 +62,18 @@ $().ready(function(){
           var key = th;
 
           if(td != null || td != ""){
-            reference[key] = td;
-            if(key == 'date'){
+            if(key == 'author') {
+              reference[key].push(td);
+            }
+            else if(key == 'date'){
               // console.log(td);
+              reference[key] = td; //we want both formats of the date
               var unixtime = Date.parse(td).getTime()/1000;
               td = unixtime;
               reference['unixtime'] = td;
+            }
+            else {
+              reference[key] = td;
             }
 
           }
