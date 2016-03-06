@@ -277,7 +277,7 @@ function showNodeDetails(nodeData){
                       nodeData.date + "<br><br> Related:<br>";
 
     for(var i=0; i<nodeData.related.length; i++){
-      htmlText = htmlText + "- "+ nodeData.related[i].userData.info.name + " [" +nodeData.related[i].userData.info.date + "] <br><br>";
+      htmlText = htmlText + "- "+ nodeData.related[i].userData.info.author + " [" +nodeData.related[i].userData.info.date + "] "+nodeData.related[i].userData.info.name+" <br><br>";
     }
 
     detailsPanel.html(htmlText);
