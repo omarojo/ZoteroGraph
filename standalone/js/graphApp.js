@@ -3,6 +3,7 @@
 var clock = new THREE.Clock();
 
 var scene, camera, renderer;
+var sceneOrtho, cameraOrtho;
 var raycaster, mouse, selectedObject;
 
 //initGraph();
@@ -66,26 +67,52 @@ function onDocumentMouseMove( event ) {
 
     });
 
+
+
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
 
 		raycaster.setFromCamera( mouse, camera );
 
+
+
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
         if ( intersects.length > 0 ) {
             // intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
-            intersects.forEach(function(element,index){
-            	if(element.object.userData.info != undefined && element.object != undefined){
+            for(var i=0; i<intersects.length; i++){
+              var element = intersects[i];
+              if(element.object.userData.info != undefined && element.object != undefined){
             		// console.log(element.object);
                 element.object.material.color.setHex(0xcc00cc);
-            		return;
-            	}
-            });
+                showNodeToolTip(element.object.userData.info);
+            		break;
+            	}else{ //clear tooltip
+                $.powerTip.hide();
+              }
+
+            }
+            // intersects.forEach(function(element,index){
+            // 	if(element.object.userData.info != undefined && element.object != undefined){
+            // 		// console.log(element.object);
+            //     element.object.material.color.setHex(0xcc00cc);
+            //     showNodeToolTip(element.object.userData.info);
+            // 		break;
+            // 	}else{ //clear tooltip
+            //     $.powerTip.hide();
+            //   }
+            // });
             //console.log(intersects[0].object.userData.info);
+        }else
+        {
+          $.powerTip.hide();
+
         }
         //console.log(event);
 }
+
+
+
 // Our Javascript will go here.
 function initGraph(scrappedJson){
   // $('body').removeAttr("overflow");
@@ -97,14 +124,19 @@ function initGraph(scrappedJson){
 	// container = document.createElement( 'div' );
 	// document.body.appendChild( container );
 
+  //SCENES
 	scene = new THREE.Scene();
 	scene.fog=new THREE.Fog( 0x00000, 0, 6000 );
+
+
+  //CAMERAS
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 8000 );
 		camera.position.z = 3000;
 		camera.position.y = 10;
 		camera.position.x = 0;
 
 
+  //RENDERER
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -138,12 +170,16 @@ function initGraph(scrappedJson){
       renderer.setSize(WIDTH, HEIGHT);
       camera.aspect = WIDTH / HEIGHT;
       camera.updateProjectionMatrix();
+
     });
 
 	// LIGHT
 	var light = new THREE.PointLight(0xffffff);
 	light.position.set(100,250,100);
 	scene.add(light);
+
+
+
 
 	//LOAD THE JSON with all the Nodes and Edges data
   jsonReport = JSON.parse(scrappedJson);
@@ -222,7 +258,17 @@ function createEdges(){
 
 
 }
+function showNodeToolTip(info){
 
+  $('#entireWebsiteContainer').data('powertipjq', $([
+      '<p><b>'+info.name+'</b></p>',
+      '<p>'+info.date+'</p>',
+      ].join('\n')));
+
+  $.powerTip.show($('#entireWebsiteContainer'));
+
+
+}
 function showNodeDetails(nodeData){
     detailsPanel.slideReveal("show");
     detailsPanel.innerHTML = nodeData.name;
@@ -268,8 +314,21 @@ function render() {
 
   	controls.update( delta );
   	requestAnimationFrame( render );
-	renderer.render( scene, camera );
+
+	  renderer.render( scene, camera );
 }
 
+CanvasRenderingContext2D.prototype.clear =
+  CanvasRenderingContext2D.prototype.clear || function (preserveTransform) {
+    if (preserveTransform) {
+      this.save();
+      this.setTransform(1, 0, 0, 1, 0, 0);
+    }
 
+    this.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (preserveTransform) {
+      this.restore();
+    }
+};
 // render();

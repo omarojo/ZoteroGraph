@@ -1,19 +1,20 @@
 #nodeDetailsPanel {
+  color: white;
   background-color: black;
   opacity: 0.50;
-  margin-left: 20px;
+  /*margin-left: 20px;*/
   padding:20,30,0,20;
-  display: block;	
-  display: none;
+  display: block;
+  /*display: none;*/
   position:absolute;
   height:auto;
   width: 240px;
   word-wrap: break-word;
 }
-  
+
 .item_title {
   font-size:16px;
-  font-family: 'Roboto', sans-serif;	
+  font-family: 'Roboto', sans-serif;
   line-height: 1em;
   letter-spacing: 0.0em;
   color: white;
@@ -22,7 +23,7 @@
 
 .item_author {
 	font-size:13px;
-	font-family: 'Roboto', sans-serif;	
+	font-family: 'Roboto', sans-serif;
 	line-height: 1.35em;
 	letter-spacing: 0.05em;
 	color: white;
@@ -31,7 +32,7 @@
 
 .item_year {
 	font-size:13px;
-	font-family: 'Roboto', sans-serif;	
+	font-family: 'Roboto', sans-serif;
 	line-height: 1.35em;
 	letter-spacing: 0.05em;
 	color: white;
@@ -40,7 +41,7 @@
 
 .item_tag {
 	font-size:13px;
-	font-family: 'Roboto', sans-serif;	
+	font-family: 'Roboto', sans-serif;
 	line-height: 1.35em;
 	letter-spacing: 0.05em;
 	color: white;
@@ -49,7 +50,7 @@
 
 .item_connection {
 	font-size:13px;
-	font-family: 'Roboto', sans-serif;	
+	font-family: 'Roboto', sans-serif;
 	line-height: 1.35em;
 	letter-spacing: 0.05em;
 	color: white;

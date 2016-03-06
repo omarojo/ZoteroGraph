@@ -12,12 +12,15 @@
     <script src="js/threejs/Projector.js"></script>
     <script src="js/graphApp.js"></script>
     <script type="text/javascript" src="js/dragndrop.js"></script>
+    <script type="text/javascript" src="js/jqueryToolTip/jquery.powertip.min.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
   </head>
 
   <link rel="stylesheet" type="text/css" href="css/glassCast.css">
+  <link rel="stylesheet" type="text/css" href="css/node.css">
+  <link rel="stylesheet" type="text/css" href="js/jqueryToolTip/jquery.powertip.css">
   <script>
   var detailsPanel;
   $().ready(function(){
@@ -26,6 +29,16 @@
 
     });
 
+    // $('#entireWebsiteContainer').data('powertipjq', $([
+    //     '<p><b>Here is some content</b></p>',
+    //     '<p><a href="http://stevenbenner.com/">Maybe a link</a></p>',
+    //     '<p><code>{ placement: \'e\', mouseOnToPopup: true }</code></p>'
+    //     ].join('\n')));
+
+    $('#entireWebsiteContainer').powerTip({
+      followMouse: true, manual:true,
+      fadeInTime: 0, fadeOutTime: 0
+    });
 
   });
 
