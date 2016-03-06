@@ -261,7 +261,7 @@ function createEdges(){
 function showNodeToolTip(info){
 
   $('#entireWebsiteContainer').data('powertipjq', $([
-      '<p><b>'+info.name+'</b></p>',
+      '<p><b>'+info.author+'</b></p>',
       '<p>'+info.date+'</p>',
       ].join('\n')));
 
