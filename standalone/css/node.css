@@ -10,6 +10,7 @@
   height:auto;
   width: 240px;
   word-wrap: break-word;
+  overflow: scroll;
 }
 
 .item_title {
@@ -17,7 +18,7 @@
   font-family: 'Roboto', sans-serif;
   line-height: 1em;
   letter-spacing: 0.0em;
-  color: white;
+  color: orange;
   text-align:left;
 }
 
@@ -35,7 +36,7 @@
 	font-family: 'Roboto', sans-serif;
 	line-height: 1.35em;
 	letter-spacing: 0.05em;
-	color: white;
+	color: cyan;
 	text-align:left;
 }
 
@@ -53,6 +54,6 @@
 	font-family: 'Roboto', sans-serif;
 	line-height: 1.35em;
 	letter-spacing: 0.05em;
-	color: white;
+	color: yellow;
 	text-align:left;
 }

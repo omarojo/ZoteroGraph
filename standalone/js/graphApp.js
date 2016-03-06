@@ -271,18 +271,28 @@ function showNodeToolTip(info){
 }
 function showNodeDetails(nodeData){
     detailsPanel.slideReveal("show");
-    detailsPanel.innerHTML = nodeData.name;
-    var htmlText = nodeData.name + "<br><br>" +
-                      nodeData.author + "<br><br>" +
-                      nodeData.date + "<br><br> Related:<br>";
 
+    detailsPanel.empty();
+
+    var nodeTitle =  $('<div></div>').html(nodeData.name);
+    nodeTitle.addClass("item_title");
+
+    var nodeAuthor =  $('<div></div>').html(nodeData.author);
+    nodeAuthor.addClass("item_author");
+
+    var nodeDate =  $('<div></div>').html(nodeData.date);
+    nodeDate.addClass("item_year");
+
+    // detailsPanel.html(htmlText);
+    detailsPanel.append(nodeTitle);
+    detailsPanel.append(nodeAuthor);
+    detailsPanel.append(nodeDate);
     for(var i=0; i<nodeData.related.length; i++){
-      htmlText = htmlText + "- "+ nodeData.related[i].userData.info.author + " [" +nodeData.related[i].userData.info.date + "] "+nodeData.related[i].userData.info.name+" <br><br>";
+      var htmlText =  "- "+ nodeData.related[i].userData.info.author + " [" +nodeData.related[i].userData.info.date + "] "+nodeData.related[i].userData.info.name+" <br><br>";
+      var nodeRelated =  $('<div></div>').html(htmlText);
+      nodeRelated.addClass("item_connection");
+      detailsPanel.append(nodeRelated);
     }
-
-    detailsPanel.html(htmlText);
-
-
 
 
 }

@@ -11,11 +11,7 @@
 #holder.hover { border: 5px solid rgba(255,255,255,1); width: 220px; height: 220px; }
 #entireWebsiteContainer {background-color: transparent; margin: 0px; padding: 0px; height: 100%; display: block; position: relative;}
 #landingPage {background-color: transparent; margin: 0px; padding: 0px; display: block; position: relative;}
-#nodeDetailsPanel {
-  background-color: rgb(64,64,64);
-  opacity: 0.95;
-  overflow: scroll;
-}
+
 html, body
 {
 	background: linear-gradient(black, purple);
