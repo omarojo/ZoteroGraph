@@ -16,6 +16,7 @@
     display: block;
     word-wrap: break-word;
     overflow: scroll;
+}
 
 .item_author {
     font-size: 18px;
@@ -46,7 +47,6 @@
     letter-spacing: 0.0em;
     color: white;
     text-align: left;
-    padding-bottom: 1em;
 }
 
 .item_connection {
@@ -60,7 +60,7 @@
 
 #powerTip {
     cursor: default;
-    font-family: roboto;
+    font-family: ‘Roboto’, sans-serif;
     font-size: 13px;
     background-color: black;
     opacity: 0.75;
@@ -70,3 +70,4 @@
     position: absolute;
     white-space: nowrap;
     z-index: 2147483647;
+}
