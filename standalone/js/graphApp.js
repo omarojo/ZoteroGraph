@@ -274,19 +274,27 @@ function showNodeDetails(nodeData){
 
     detailsPanel.empty();
 
-    var nodeTitle =  $('<div></div>').html(nodeData.name);
+    var nodeTitle =  $('<div></div>').html('\"' + nodeData.name + '\"');
     nodeTitle.addClass("item_title");
 
-    var nodeAuthor =  $('<div></div>').html(nodeData.author);
+    var nodeAuthor =  $('<div></div>');
+    nodeData.author.forEach(function(element, index){
+      if(index == 0)
+        nodeAuthor.append(element);
+      nodeAuthor.append(", " + element);
+    });
     nodeAuthor.addClass("item_author");
 
-    var nodeDate =  $('<div></div>').html(nodeData.date);
+    var nodeDate =  $('<div></div>').html("("+nodeData.date + ")");
     nodeDate.addClass("item_year");
 
     // detailsPanel.html(htmlText);
-    detailsPanel.append(nodeTitle);
     detailsPanel.append(nodeAuthor);
     detailsPanel.append(nodeDate);
+    detailsPanel.append(nodeTitle);
+
+    detailsPanel.append("<br><br>");
+    
     for(var i=0; i<nodeData.related.length; i++){
       var htmlText =  "- "+ nodeData.related[i].userData.info.author + " [" +nodeData.related[i].userData.info.date + "] "+nodeData.related[i].userData.info.name+" <br><br>";
       var nodeRelated =  $('<div></div>').html(htmlText);
