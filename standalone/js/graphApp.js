@@ -279,9 +279,12 @@ function showNodeDetails(nodeData){
 
     var nodeAuthor =  $('<div></div>');
     nodeData.author.forEach(function(element, index){
-      if(index == 0)
+      if(index == 0){
         nodeAuthor.append(element);
-      nodeAuthor.append(", " + element);
+      }
+      else{
+        nodeAuthor.append(", " + element);
+      }
     });
     nodeAuthor.addClass("item_author");
 
@@ -294,7 +297,7 @@ function showNodeDetails(nodeData){
     detailsPanel.append(nodeTitle);
 
     detailsPanel.append("<br><br>");
-    
+
     for(var i=0; i<nodeData.related.length; i++){
       var htmlText =  "- "+ nodeData.related[i].userData.info.author + " [" +nodeData.related[i].userData.info.date + "] "+nodeData.related[i].userData.info.name+" <br><br>";
       var nodeRelated =  $('<div></div>').html(htmlText);
