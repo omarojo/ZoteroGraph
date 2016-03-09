@@ -1,5 +1,5 @@
 #nodeDetailsPanel {
-    position: fixed;
+   position: fixed;
     width: 330px;
     padding-left: 40px;
     padding-top: 30px;
@@ -12,7 +12,7 @@
     left: 0px;
     color: white;
     background-color: black;
-    opacity: 0.65;
+    opacity: 0.75;
     display: block;
     word-wrap: break-word;
     overflow: scroll;
@@ -21,8 +21,9 @@
 .item_author {
     font-size: 18px;
     font-family: 'Roboto', sans-serif;
-    line-height: 1.5em;
+    line-height: 1.2em;
     letter-spacing: 0.05em;
+    padding-bottom: 0.75em;
     color: white;
     text-align: left;
     font-weight: 700;
@@ -34,10 +35,10 @@
     font-weight: 700;
     line-height: 1.5em;
     letter-spacing: 0.05em;
+    padding-bottom: 0.75em;
     color: white;
     text-align: left;
 }
-
 
 .item_title {
     font-size: 18px;
@@ -47,6 +48,7 @@
     letter-spacing: 0.0em;
     color: white;
     text-align: left;
+    padding-bottom: 1em;
 }
 
 .item_connection {
