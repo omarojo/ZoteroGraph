@@ -128,10 +128,32 @@ $().ready(function(){
         json.links = tempLinks;
 
         //console.log(JSON.stringify(json, null, 4));
+        //Check it Url has de command to download the Json file
+        let fullUrl = new URL(window.location.href);
+        let paramsString = fullUrl.search.slice(1); //slice 1 to rmove the ? sign
+        var searchParams = new URLSearchParams(paramsString);
+
+        if(searchParams.has("json") === true){
+          console.log(">> DOWNLOADING JSON FILE");
+          downloadJSONFile(JSON.stringify(json, null, 4));
+        }
+
 
         //Start the ThreeJs script
         initGraph(JSON.stringify(json, null, 4));
 
+    }
+    function downloadJSONFile(jsonObject){
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonObject));
+      element.setAttribute('download', 'report.json'); //report is the name of the file to be generate, report.json
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
     }
 
 
