@@ -30,13 +30,17 @@ $().ready(function(){
     };
 
     function generateGraphJSON(theHTMLReport){
-      var json = { nodes : [], links : [], errors: []};
+      var json = { categories: {}, nodes : [], links : [], errors: []};
       var referenceCounter = 0;
       var span = document.createElement('span');
       span.innerHTML = ['<p>', theHTMLReport, '</p>'].join('');
       //document.getElementById('list').insertBefore(span, null);
       var report = $(span);
       //console.log(report.html());
+
+      //Defaults values for Categories
+      json.categories = {"A":[],"B":[],"C":[],"D":[]};
+
 
       report.find('ul[class="report combineChildItems"]').find('li[class*="item"]').each(function(index, element){
         var reference = {};
@@ -80,11 +84,22 @@ $().ready(function(){
         });
 
         reference.tags = [];
-        //Create Tags
+        reference.categories = {"A":"-","B":"-","C":"-","D":"-"}; //Defaults
+        //Create Tags and Categories
         var tagsUL = $(element).find('ul[tags="tags"]');
         tagsUL.children().each(function(index,relObject){
           //console.log($(relObject));
+          //Save values for the reference
+          var cat = $(relObject).text();
           reference.tags.push($(relObject).text());
+          var cKey = cat.substring(0,1); //ie. A
+          var cValue = cat.substring(3, cat.length);//ie Psychology
+          reference.categories[cKey] = cValue;
+          //Save Global Categories
+          var isInCategorie = (json.categories[cKey].indexOf(cValue) > -1); //true if the value is already in the array of Categories
+          if(isInCategorie == false && cValue != "-"){ //dont save the category if its -
+            json.categories[cKey].push(cValue); //save it
+          }
 
         });
 
