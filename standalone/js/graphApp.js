@@ -219,11 +219,13 @@ function initGraph(scrappedJson){
     if(jsonReport.categories[value] == undefined){
       guiSubCatController = gui.add(settingsObject, 'subCategory', ["ALL"] );
       gui.__controllers[1].__select.selectedIndex = 0;
+      settingsObject.subCategory = "ALL";
     }else{
       var subCats = jsonReport.categories[value];
       subCats.unshift("ALL");
       guiSubCatController = gui.add(settingsObject, 'subCategory', subCats );  
       gui.__controllers[1].__select.selectedIndex = 0;
+      settingsObject.subCategory = "ALL";
     }
     
   });
