@@ -5,12 +5,19 @@ var clock = new THREE.Clock();
 var scene, camera, renderer;
 var sceneOrtho, cameraOrtho;
 var raycaster, mouse, selectedObject;
+var settingsObject, gui;
 
 //initGraph();
 // animate();
 
 var nodes, edges, jsonReport;
 
+var GlassCastSettings = function (json){
+  
+  this.category = "ALL";//["A","B","C","D"];
+  this.subCategory = "ALL";
+
+}
 function onDocumentMouseDown( event ) {
 
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
@@ -67,14 +74,10 @@ function onDocumentMouseMove( event ) {
 
     });
 
-
-
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
 
 		raycaster.setFromCamera( mouse, camera );
-
-
 
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
@@ -192,6 +195,38 @@ function initGraph(scrappedJson){
 	    createNodes();
 	    createEdges();
 	//  });
+
+  //Create Settings object
+  settingsObject = new GlassCastSettings(jsonReport);
+  gui = new dat.GUI({"width":600});
+  var catNamesOnly = [];
+  for (var key in jsonReport.categories) {
+    if (jsonReport.categories.hasOwnProperty(key)) {
+      catNamesOnly.push(key);
+    }
+  }
+  catNamesOnly.unshift("ALL");
+  var guiCatController = gui.add(settingsObject, 'category', catNamesOnly );
+
+  gui.__controllers[0].__select.selectedIndex = 0;
+
+  var guiSubCatController = gui.add(settingsObject, 'subCategory', ["ALL"] );
+
+  guiCatController.onChange(function(value){
+    //console.log(value);
+    // settingsObject.subCategory = jsonReport.categories[value];
+    guiSubCatController.remove();
+    if(jsonReport.categories[value] == undefined){
+      guiSubCatController = gui.add(settingsObject, 'subCategory', ["ALL"] );
+      gui.__controllers[1].__select.selectedIndex = 0;
+    }else{
+      var subCats = jsonReport.categories[value];
+      subCats.unshift("ALL");
+      guiSubCatController = gui.add(settingsObject, 'subCategory', subCats );  
+      gui.__controllers[1].__select.selectedIndex = 0;
+    }
+    
+  });
 
   render();
 
