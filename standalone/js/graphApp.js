@@ -213,7 +213,7 @@ function initGraph(scrappedJson){
   var guiSubCatController = gui.add(settingsObject, 'subCategory', ["ALL"] );
 
   guiCatController.onChange(function(value){
-    //console.log(value);
+    // console.log(value);
     // settingsObject.subCategory = jsonReport.categories[value];
     guiSubCatController.remove();
     if(jsonReport.categories[value] == undefined){
@@ -227,12 +227,25 @@ function initGraph(scrappedJson){
       gui.__controllers[1].__select.selectedIndex = 0;
       settingsObject.subCategory = "ALL";
     }
+    guiSubCatController.onChange(function(subCatValue){
+    	//console.log(subCatValue);
+
+
+    });
+    dyeNodesForFilter();
     
   });
 
   render();
 
 }
+
+function dyeNodesForFilter(){
+	console.log(settingsObject.subCategory);
+	console.log(settingsObject.category);
+
+}
+
 
 function createNodes(){
 	nodes = [];
