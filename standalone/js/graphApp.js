@@ -4,8 +4,13 @@ var clock = new THREE.Clock();
 
 var scene, camera, renderer;
 var sceneOrtho, cameraOrtho;
-var raycaster, mouse, selectedObject;
+var raycaster, mouse, selectedObject, highlightedObject;
 var settingsObject, gui;
+var DEFAULT_COLOR = 0xffffff;
+var SELECTED_COLOR = 0xcc00cc;
+var FILTERED_COLOR = 0xffff66;
+var HIGHLIGHTED_COLOR = 0xcc00cc;
+
 
 //initGraph();
 // animate();
@@ -28,33 +33,38 @@ function onDocumentMouseDown( event ) {
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
         if ( intersects.length > 0 ) {
-            // intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+            // intersects[ 0 ].object.material.color.setHex( Math.random() * DEFAULT_COLOR );
             intersects.forEach(function(element,index){
             	if(element.object.userData.info != undefined && element.object != undefined){
-            		// console.log(element.object);
-            		console.log(element.object.userData.info);
-                //Set back to default colors
-                if(selectedObject != element && selectedObject != undefined){
-                  selectedObject.object.material.color.setHex(0xffffff);
-                  //Lines color
-                  selectedObject.object.userData.info.links.forEach(function(line){
-                    line.material.color.setHex(0xffffff);
-                    line.material.opacity = 0.15;
-                    line.material.linewidth = 0.8;
-                  });
-                }
-                //Sphere color
-                element.object.material.color.setHex(0xcc00cc);
-                //Lines color
-                element.object.userData.info.links.forEach(function(line){
-                  line.material.color.setHex(0xcc00cc);
-                  line.material.opacity = 1.0;
-                  line.material.linewidth = 1.5;
-                });
-                showNodeDetails(element.object.userData.info);
-                selectedObject = element;
-            		return;
-            	}
+            		
+	            	//console.log(element.object.userData.info);
+
+	                //Set back to default colors
+	                if(selectedObject != element && selectedObject != undefined){
+	                  selectedObject.object.material.color.setHex(DEFAULT_COLOR);
+	    			  if(selectedObject.object.userData.info.filterColor != undefined){
+	    			  	selectedObject.object.material.color.setHex(selectedObject.object.userData.info.filterColor);	
+	    			  }
+	                  //Lines color
+	                  selectedObject.object.userData.info.links.forEach(function(line){
+	                    line.material.color.setHex(DEFAULT_COLOR);
+	                    line.material.opacity = 0.15;
+	                    line.material.linewidth = 0.8;
+	                  });
+	                }
+	                //Sphere color
+	                element.object.material.color.setHex(SELECTED_COLOR);
+	                //Lines color
+	                element.object.userData.info.links.forEach(function(line){
+	                  line.material.color.setHex(SELECTED_COLOR);
+	                  line.material.opacity = 1.0;
+	                  line.material.linewidth = 1.5;
+	                });
+	                showNodeDetails(element.object.userData.info);
+	                selectedObject = element;
+	                console.log(selectedObject.object.userData.info);
+	            	return;
+	            }
             });
             //console.log(intersects[0].object.userData.info);
         }
@@ -62,17 +72,35 @@ function onDocumentMouseDown( event ) {
 }
 function onDocumentMouseMove( event ) {
 
-      // hoveredObject.object.material.color.setHex(0xffffff);
-    nodes.forEach(function( sphere ) {
-      if(selectedObject != undefined){
-        if(selectedObject.object != sphere){
-            sphere.material.color.setHex( 0xffffff);
-        }
-      }else{
-        sphere.material.color.setHex( 0xffffff);
-      }
+      // hoveredObject.object.material.color.setHex(DEFAULT_COLOR);
+    // nodes.forEach(function( sphere ) {
+    //   if(selectedObject != undefined){
+    //     if(selectedObject.object != sphere){
+    //    //     sphere.material.color.setHex( DEFAULT_COLOR); //Lines
+    //     }
+    //   }
+    //   else{
+    //     sphere.material.color.setHex( DEFAULT_COLOR); //Nodes
+    //   }
 
-    });
+    // });
+    if(highlightedObject != undefined){
+    	if(selectedObject != undefined){
+    		if(highlightedObject.object.userData.info.id != selectedObject.object.userData.info.id) //only color gray if its not the selected one
+    		{
+    			highlightedObject.object.material.color.setHex(DEFAULT_COLOR);	
+    			if(highlightedObject.object.userData.info.filterColor != undefined){
+    				highlightedObject.object.material.color.setHex(highlightedObject.object.userData.info.filterColor);	
+    			}
+    		}
+    	}else{
+    		highlightedObject.object.material.color.setHex(DEFAULT_COLOR);
+    		if(highlightedObject.object.userData.info.filterColor != undefined){
+    				highlightedObject.object.material.color.setHex(highlightedObject.object.userData.info.filterColor);	
+    		}	
+    	}
+    	
+    }
 
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
@@ -82,12 +110,14 @@ function onDocumentMouseMove( event ) {
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
         if ( intersects.length > 0 ) {
-            // intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+            // intersects[ 0 ].object.material.color.setHex( Math.random() * DEFAULT_COLOR );
             for(var i=0; i<intersects.length; i++){
               var element = intersects[i];
               if(element.object.userData.info != undefined && element.object != undefined){
             		// console.log(element.object);
-                element.object.material.color.setHex(0xcc00cc);
+                element.object.material.color.setHex(HIGHLIGHTED_COLOR);
+                highlightedObject = element;
+                //console.log(highlightedObject.object.userData.info);
                 showNodeToolTip(element.object.userData.info);
             		break;
             	}else{ //clear tooltip
@@ -95,17 +125,6 @@ function onDocumentMouseMove( event ) {
               }
 
             }
-            // intersects.forEach(function(element,index){
-            // 	if(element.object.userData.info != undefined && element.object != undefined){
-            // 		// console.log(element.object);
-            //     element.object.material.color.setHex(0xcc00cc);
-            //     showNodeToolTip(element.object.userData.info);
-            // 		break;
-            // 	}else{ //clear tooltip
-            //     $.powerTip.hide();
-            //   }
-            // });
-            //console.log(intersects[0].object.userData.info);
         }else
         {
           $.powerTip.hide();
@@ -177,7 +196,7 @@ function initGraph(scrappedJson){
     });
 
 	// LIGHT
-	var light = new THREE.PointLight(0xffffff);
+	var light = new THREE.PointLight(DEFAULT_COLOR);
 	light.position.set(100,250,100);
 	scene.add(light);
 
@@ -229,7 +248,7 @@ function initGraph(scrappedJson){
     }
     guiSubCatController.onChange(function(subCatValue){
     	//console.log(subCatValue);
-
+    	dyeNodesForFilter();
 
     });
     dyeNodesForFilter();
@@ -243,6 +262,33 @@ function initGraph(scrappedJson){
 function dyeNodesForFilter(){
 	console.log(settingsObject.subCategory);
 	console.log(settingsObject.category);
+
+	var selectedCat = settingsObject.category;
+	var selectedSubCat = settingsObject.subCategory;
+
+	//Clean
+	nodes.forEach(function( sphere ) {
+			sphere.userData.info.filterColor = null;
+			sphere.material.color.setHex(DEFAULT_COLOR);
+	});
+
+	if(selectedCat == "ALL"){ //when selectedCat is ALL, selectedSubCat is also ALL
+		nodes.forEach(function( sphere ) {
+			sphere.userData.info.filterColor = null;
+			sphere.material.color.setHex(DEFAULT_COLOR);
+		});		
+	}else{
+		nodes.forEach(function( sphere ) {
+			if(sphere.userData.info.categories[selectedCat] != "-" && selectedSubCat == "ALL"){
+				sphere.userData.info.filterColor = FILTERED_COLOR;
+	        	sphere.material.color.setHex(FILTERED_COLOR);		
+			}
+			if(selectedSubCat != "ALL" && selectedSubCat == sphere.userData.info.categories[selectedCat] ){
+				sphere.userData.info.filterColor = FILTERED_COLOR;
+	        	sphere.material.color.setHex(FILTERED_COLOR);			
+			}    
+		});
+	}
 
 }
 
@@ -264,7 +310,7 @@ function createNodes(){
       });
       nodeSize = nodeSize + nodeReferencesCount;//(nodeReferencesCount * 0.2);
 	    var nodeGeometry = new THREE.SphereGeometry(nodeSize,30,30);
-      var nodeMaterial = new THREE.MeshBasicMaterial({color: new THREE.Color( 0xffffff ), wireframe: true, wireframeLinewidth: 2.0, fog: true});
+      var nodeMaterial = new THREE.MeshBasicMaterial({color: new THREE.Color( DEFAULT_COLOR ), wireframe: true, wireframeLinewidth: 2.0, fog: true});
 
 
       var node = new THREE.Mesh(nodeGeometry, nodeMaterial);
@@ -293,7 +339,7 @@ function createEdges(){
 														nodes[jsonReport.links[i].target].position.y,
 														nodes[jsonReport.links[i].target].position.z ) );
 		var line = new THREE.Line( line_segment,
-	                            new THREE.LineBasicMaterial( { color: 0xffffff,//Math.random() * 0xffffff,
+	                            new THREE.LineBasicMaterial( { color: DEFAULT_COLOR,//Math.random() * DEFAULT_COLOR,
 	                            							   linewidth: 0.8,
 	                            							   linecap: "round",
 	                                                           opacity: 0.15,
