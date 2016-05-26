@@ -1,32 +1,30 @@
 #nodeDetailsPanel {
    position: fixed;
-    width: 25%;
+    width: 330px;
     padding-left: 40px;
     padding-top: 30px;
     padding-right: 20px;
-    padding-bottom: 60px;
+    padding-bottom: 40px;
     transition: all 300ms ease;
     height: 100%;
     right: 10px;
     top: 0px;
     left: 0px;
-    bottom: 20px;
     color: white;
-    background-color: gray;
-    opacity: 0.85;
+    background-color: black;
+    opacity: 0.75;
     display: block;
     word-wrap: break-word;
     overflow: scroll;
 }
-
 .flexcroll{
-    scrollbar-face-color: none;
-    scrollbar-shadow-color: none;
-    scrollbar-highlight-color: none;
-    scrollbar-3dlight-color: none;
-    scrollbar-darkshadow-color: none;
-    scrollbar-track-color: none;
-    scrollbar-arrow-color: none;
+    scrollbar-face-color: #CC00FF;
+    scrollbar-shadow-color: #FFFFFF;
+    scrollbar-highlight-color: #FFFFFF;
+    scrollbar-3dlight-color: #FFFFFF;
+    scrollbar-darkshadow-color: #FFFFFF;
+    scrollbar-track-color: #FFFFFF;
+    scrollbar-arrow-color: #FFFFFF;
 }
 
 /* Let's get this party started */
@@ -36,7 +34,7 @@
  
 /* Track */
 .flexcroll::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,0.3); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
     -webkit-border-radius: 10px;
     border-radius: 10px;
 }
@@ -45,8 +43,8 @@
 .flexcroll::-webkit-scrollbar-thumb {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.8); 
-    -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,0.5); 
+    background: rgba(204,0,255,0.8); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
 .item_author {
@@ -54,7 +52,7 @@
     font-family: 'Roboto', sans-serif;
     line-height: 1.2em;
     letter-spacing: 0.05em;
-    padding-bottom: 0.25em;
+    padding-bottom: 0.75em;
     color: white;
     text-align: left;
     font-weight: 700;
@@ -72,8 +70,8 @@
 }
 
 .item_title {
-    font-size: 22px;
-    font-style: bold;
+    font-size: 18px;
+    font-style: italic;
     font-family: 'Roboto', sans-serif;
     line-height: 1.2em;
     letter-spacing: 0.0em;
@@ -93,7 +91,7 @@
 
 #powerTip {
     cursor: default;
-    font-family: 'Roboto', sans-serif;
+    font-family: ‘Roboto’, sans-serif;
     font-size: 13px;
     background-color: black;
     opacity: 0.75;

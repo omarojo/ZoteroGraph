@@ -278,14 +278,15 @@ function dyeNodesForFilter(){
 			sphere.material.color.setHex(DEFAULT_COLOR);
 		});		
 	}else{
+    var tempRandomColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
 		nodes.forEach(function( sphere ) {
 			if(sphere.userData.info.categories[selectedCat] != "-" && selectedSubCat == "ALL"){
-				sphere.userData.info.filterColor = FILTERED_COLOR;
-	        	sphere.material.color.setHex(FILTERED_COLOR);		
+				    sphere.userData.info.filterColor = tempRandomColor;
+	        	sphere.material.color.setHex(tempRandomColor);		
 			}
 			if(selectedSubCat != "ALL" && selectedSubCat == sphere.userData.info.categories[selectedCat] ){
-				sphere.userData.info.filterColor = FILTERED_COLOR;
-	        	sphere.material.color.setHex(FILTERED_COLOR);			
+				    sphere.userData.info.filterColor = tempRandomColor;
+	        	sphere.material.color.setHex(tempRandomColor);			
 			}    
 		});
 	}
