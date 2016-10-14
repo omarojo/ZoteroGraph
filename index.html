@@ -1,29 +1,215 @@
-<html>
-<head>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=620">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.slidereveal.min.js"></script>
+    <!-- ThreeJs -->
+    <script src="js/threejs/three.min.js"></script>
+    <script src="js/threejs/controls/FlyControls.js"></script>
+    <script src="js/threejs/Projector.js"></script>
+    <script src="js/threejs/cameras/CombinedCamera.js"></script>
+    <script src="js/graphApp.js"></script>
+    <script type="text/javascript" src="js/dragndrop.js"></script>
+    <script type="text/javascript" src="js/jqueryToolTip/jquery.powertip.min.js"></script>
+    <script type="text/javascript" src="js/dat.gui.min.js"></script>
 
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+  </head>
 
+  <link rel="stylesheet" type="text/css" href="css/datStyle.css">
+  <link rel="stylesheet" type="text/css" href="css/glassCast.css">
+  <link rel="stylesheet" type="text/css" href="css/node.css">
+  <link rel="stylesheet" type="text/css" href="js/jqueryToolTip/jquery.powertip.css">
+  <script>
+  var detailsPanel;
+  $().ready(function(){
+    //hide the Camera Settings
+    $('#cameraSettings').hide();
 
-<script>
-	
-</script>
+    detailsPanel = $('#nodeDetailsPanel').slideReveal({
+      push: false
 
+    });
+
+    // $('#entireWebsiteContainer').data('powertipjq', $([
+    //     '<p><b>Here is some content</b></p>',
+    //     '<p><a href="http://stevenbenner.com/">Maybe a link</a></p>',
+    //     '<p><code>{ placement: \'e\', mouseOnToPopup: true }</code></p>'
+    //     ].join('\n')));
+    $('#defaultJson').click(function(){
+      $.getJSON('sampleReport.json', function(data) {
+        initGraph(JSON.stringify(data, null, 4));
+      });
+
+    });
+    $('#entireWebsiteContainer').powerTip({
+      followMouse: true, manual:true,
+      fadeInTime: 0, fadeOutTime: 0
+    });
+
+  });
+
+  </script>
 </head>
 <body>
+<div id="entireWebsiteContainer">
+  <div id="cameraSettings" style="position: absolute; bottom: 0; width: 100%; text-align: center; color: #ec41fd;">
+      View: <a href="#" onclick="setOrthographic();return false;"> Orthographic</a> |
+        <a href="#" onclick="setPerspective();return false;">Perspective</a><br>
+      Lens: <a href="#" onclick="setLens(12);return false;">12mm</a> |
+        <a href="#" onclick="setLens(16);return false;">16mm</a> |
+        <a href="#" onclick="setLens(24);return false;">24mm</a> |
+        <a href="#" onclick="setLens(35);return false;">35mm</a> |
+        <a href="#" onclick="setLens(50);return false;">50mm</a> |
+        <a href="#" onclick="setLens(60);return false;">60mm</a> |
+        <a href="#" onclick="setLens(85);return false;">85mm</a> |
+        <a href="#" onclick="setLens(105);return false;">105mm</a><br>
+      Fov: <a href="#" onclick="setFov(30);return false;">30°</a> |
+        <a href="#" onclick="setFov(50);return false;">50°</a> |
+        <a href="#" onclick="setFov(70);return false;">70°</a> |
+        <a href="#" onclick="setFov(100);return false;">100°</a><br>
+      Zoom: <a href="#" onclick="camera.setZoom(0.5);return false;">0.5x</a> |
+          <a href="#" onclick="camera.setZoom(1);return false;">1x</a> |
+          <a href="#" onclick="camera.setZoom(2);return false;">2x</a> |
 
+        <br/>
+      Views: <a href="#" onclick="camera.toTopView();lookAtScene=false;return false;">Top view</a> |
+        <a href="#" onclick="camera.toBottomView();lookAtScene=false;return false;">Bottom view</a> |
+        <a href="#" onclick="camera.toLeftView();lookAtScene=false;return false;">Left view</a> |
+        <a href="#" onclick="camera.toRightView();lookAtScene=false;return false;">Right view</a> |
+        <a href="#" onclick="camera.toFrontView();lookAtScene=false;return false;">Front view</a> |
+        <a href="#" onclick="camera.toBackView();lookAtScene=false;return false;">Back view</a> |
+        <a href="#" onclick="lookAtScene=true;return false;">Look at Scene</a>
+        <br/>
+      <div id="fov"></div>
+    </div>
+  <div id='nodeDetailsPanel' class="flexcroll"></div>
+  <div id='landingPage'>
+      <div class="container">
+        <div class="sigla">Welcome to
+          <strong>Glass Cast</strong>
+        </div>
+        <p class="testo2">
+          <strong>Visualize your research</strong>
+        </p>
+        <div class="spot">
+            <div id="holder">
+              <center>
+                <p id="status"></p>
+              </center>
+            </div>
+            <br />
+            <br />
+          <p class="box_text"><strong>Drag and Drop <br>your Zotero report <br>into the box</strong>
+          </p>
+		  <br />
+        </div>
+        <img src="img/fondo.png" alt="" align="center" style="max-width:960px;"/>
+        <hr/>
+        <!-- BOX CENTRAL -->
+        <p class="testo2">Do not have a Zotero report? Create one</p>
+        <div id="box">
+          <div class="box_img"><img src="https://www.zotero.org/static/images/theme/zotero_theme/zotero_128.png" width="128" height="128"/>
+          </div>
 
-<!-- ThreeJs -->
-<script src="threejs/three.min.js"></script>
-<script src="threejs/controls/FlyControls.js"></script>
-<script src="threejs/Projector.js"></script>
-<script src="graphApp.js"></script>
-  
+          <div>
+            <h3>
+              <span id="defaultJson" class="box_title">Download Zotero</span>
+            </h3>
+          </div>
+          <div class="box_text">
+            <p>Zotero is a powerful open access citation manager.
+              <strong>
+                <a href="https://www.zotero.org" target="_blank">
+                  Download it here
+                </a>
+              </strong>
+              and get familiar with it</p>
+          </div>
+        </div>
+      </div>
 
+      <div id="box">
+        <div class="box_img"><img src="img/collection.png"/></div>
+        <div>
+          <h3>
+            <span class="box_title">Create a collection</span>
+          </h3>
+        </div>
 
+        <div class="box_text">You can visualize several different document databases by using individual collections. You can use Glass Cast to visualize and navigate within a single paper or an entire thesis</div>
+      </div>
+      <div id="box">
+        <div class="box_img"><img src="img/tagsrelated.png"/></div>
+        <div>
+          <h3>
+            <span class="box_title">Annotate, tag and relate
+            </span>
+          </h3>
+        </div>
 
+        <div class="box_text">Use Zotero tabs to categorize and connect your documents. Use
+          <strong>TAGS</strong>
+          to categorize your information consistently. Use the
+          <strong>RELATED</strong>
+          tab to generate explicit or implicit connections between the documents.
+          <br/>
+        </div>
+      </div>
+
+      <div id="box">
+        <div>
+          <div>
+            <div class="box_img"><img src="img/report.png"/></div>
+            <div>
+              <div>
+                <h3>
+                  <span class="box_title">Generate a report</span>
+                </h3>
+              </div>
+              <div class="box_text">
+                <p>Right-click on your collection to generate a Zotero report. This report will contain all the data that you provided<br/>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="clear:both;"></div>
+      </p>
+
+      <!-- START IMAGE -->
+      <div class="img_01">
+        <div class="image01"><img src="img/sample.png" alt=""/></div>
+      </div>
+
+      <div style="clear:both;"></div>
+
+      <!-- FOOTER -->
+
+      <div id="footer">
+
+        <div class="container">
+          <p class="testo2">Credits and acknowledgements</p>
+        </div>
+
+        <div class="banner_centrale">
+          <table class="box_text" cellpadding="15px">
+            <tr>
+              <td>
+                <p>Glass Cast is an intended for the visualization of knowledge networks, including parameters such as authorship, time, subject, discipline, and connections between documents in a corpus. The name Glass Cast refers to the working metaphor of the prototype, which is a cast sculpture in which the object of representation appears as negative space in a glass block. The data is acquired from the collection reports produced by Zotero and displayed in a 3D model within this internet browser. Links between articles are displayed by lines and time is displayed on the y axis.</p>
+                <p>Conceptualization, research and development:<br/><strong>Monica Brown | Dr. Teresa Dobson | Omar Juarez | Ernesto Peña | Geoff Roeder</strong></p>                
+                <p>The Glass Cast was supported by SSHRC (Social Sciences and Humanities Research Council of Canada) funds from <a href="www.inke.ca">INKE</a> from 2012 to 2016.</p></td>
+            </tr>
+          </table>
+        </div>
+      <div style="clear:both;"></div>
+  </div> <!--- end of landingPage container -->
+</div> <!--end of ENTIRE WEBSITE CONTAINER -->
 </body>
-
-
 
 </html>
