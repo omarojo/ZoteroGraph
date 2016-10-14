@@ -10,6 +10,7 @@
     <script src="js/threejs/three.min.js"></script>
     <script src="js/threejs/controls/FlyControls.js"></script>
     <script src="js/threejs/Projector.js"></script>
+    <script src="js/threejs/cameras/CombinedCamera.js"></script>
     <script src="js/graphApp.js"></script>
     <script type="text/javascript" src="js/dragndrop.js"></script>
     <script type="text/javascript" src="js/jqueryToolTip/jquery.powertip.min.js"></script>
@@ -26,6 +27,9 @@
   <script>
   var detailsPanel;
   $().ready(function(){
+    //hide the Camera Settings
+    $('#cameraSettings').hide();
+
     detailsPanel = $('#nodeDetailsPanel').slideReveal({
       push: false
 
@@ -53,6 +57,36 @@
 </head>
 <body>
 <div id="entireWebsiteContainer">
+  <div id="cameraSettings" style="position: absolute; bottom: 0; width: 100%; text-align: center; color: #ec41fd;">
+      View: <a href="#" onclick="setOrthographic();return false;"> Orthographic</a> |
+        <a href="#" onclick="setPerspective();return false;">Perspective</a><br>
+      Lens: <a href="#" onclick="setLens(12);return false;">12mm</a> |
+        <a href="#" onclick="setLens(16);return false;">16mm</a> |
+        <a href="#" onclick="setLens(24);return false;">24mm</a> |
+        <a href="#" onclick="setLens(35);return false;">35mm</a> |
+        <a href="#" onclick="setLens(50);return false;">50mm</a> |
+        <a href="#" onclick="setLens(60);return false;">60mm</a> |
+        <a href="#" onclick="setLens(85);return false;">85mm</a> |
+        <a href="#" onclick="setLens(105);return false;">105mm</a><br>
+      Fov: <a href="#" onclick="setFov(30);return false;">30°</a> |
+        <a href="#" onclick="setFov(50);return false;">50°</a> |
+        <a href="#" onclick="setFov(70);return false;">70°</a> |
+        <a href="#" onclick="setFov(100);return false;">100°</a><br>
+      Zoom: <a href="#" onclick="camera.setZoom(0.5);return false;">0.5x</a> |
+          <a href="#" onclick="camera.setZoom(1);return false;">1x</a> |
+          <a href="#" onclick="camera.setZoom(2);return false;">2x</a> |
+
+        <br/>
+      Views: <a href="#" onclick="camera.toTopView();lookAtScene=false;return false;">Top view</a> |
+        <a href="#" onclick="camera.toBottomView();lookAtScene=false;return false;">Bottom view</a> |
+        <a href="#" onclick="camera.toLeftView();lookAtScene=false;return false;">Left view</a> |
+        <a href="#" onclick="camera.toRightView();lookAtScene=false;return false;">Right view</a> |
+        <a href="#" onclick="camera.toFrontView();lookAtScene=false;return false;">Front view</a> |
+        <a href="#" onclick="camera.toBackView();lookAtScene=false;return false;">Back view</a> |
+        <a href="#" onclick="lookAtScene=true;return false;">Look at Scene</a>
+        <br/>
+      <div id="fov"></div>
+    </div>
   <div id='nodeDetailsPanel' class="flexcroll"></div>
   <div id='landingPage'>
       <div class="container">
@@ -174,8 +208,8 @@
           </table>
         </div>
       <div style="clear:both;"></div>
-    </div> <!--- end of landingPage container -->
-  </div> <!--end of ENTIRE WEBSITE CONTAINER -->
+  </div> <!--- end of landingPage container -->
+</div> <!--end of ENTIRE WEBSITE CONTAINER -->
 </body>
 
 </html>

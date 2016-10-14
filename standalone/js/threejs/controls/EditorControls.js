@@ -19,13 +19,14 @@ THREE.EditorControls = function ( object, domElement ) {
 	var scope = this;
 	var vector = new THREE.Vector3();
 
-	var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2 };
+	var STATE = { NONE: - 1, ROTATE: 0, ZOOM: 1, PAN: 2 };
 	var state = STATE.NONE;
 
 	var center = this.center;
 	var normalMatrix = new THREE.Matrix3();
 	var pointer = new THREE.Vector2();
 	var pointerOld = new THREE.Vector2();
+	var spherical = new THREE.Spherical();
 
 	// events
 
@@ -39,7 +40,7 @@ THREE.EditorControls = function ( object, domElement ) {
 		if ( frame && target.geometry ) {
 
 			scale = ( scale.x + scale.y + scale.z ) / 3;
-			center.add(target.geometry.boundingSphere.center.clone().multiplyScalar( scale ));
+			center.add( target.geometry.boundingSphere.center.clone().multiplyScalar( scale ) );
 			var radius = target.geometry.boundingSphere.radius * ( scale );
 			var pos = object.position.clone().sub( center ).normalize().multiplyScalar( radius * 2 );
 			object.position.copy( center ).add( pos );
@@ -86,21 +87,14 @@ THREE.EditorControls = function ( object, domElement ) {
 
 		vector.copy( object.position ).sub( center );
 
-		var theta = Math.atan2( vector.x, vector.z );
-		var phi = Math.atan2( Math.sqrt( vector.x * vector.x + vector.z * vector.z ), vector.y );
+		spherical.setFromVector3( vector );
 
-		theta += delta.x;
-		phi += delta.y;
+		spherical.theta += delta.x;
+		spherical.phi += delta.y;
 
-		var EPS = 0.000001;
+		spherical.makeSafe();
 
-		phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
-
-		var radius = vector.length();
-
-		vector.x = radius * Math.sin( phi ) * Math.sin( theta );
-		vector.y = radius * Math.cos( phi );
-		vector.z = radius * Math.sin( phi ) * Math.cos( theta );
+		vector.setFromSpherical( spherical );
 
 		object.position.copy( center ).add( vector );
 
@@ -115,8 +109,6 @@ THREE.EditorControls = function ( object, domElement ) {
 	function onMouseDown( event ) {
 
 		if ( scope.enabled === false ) return;
-
-		event.preventDefault();
 
 		if ( event.button === 0 ) {
 
@@ -144,8 +136,6 @@ THREE.EditorControls = function ( object, domElement ) {
 	function onMouseMove( event ) {
 
 		if ( scope.enabled === false ) return;
-
-		event.preventDefault();
 
 		pointer.set( event.clientX, event.clientY );
 
@@ -187,26 +177,35 @@ THREE.EditorControls = function ( object, domElement ) {
 
 		// if ( scope.enabled === false ) return;
 
-		var delta = 0;
-
-		if ( event.wheelDelta ) { // WebKit / Opera / Explorer 9
-
-			delta = - event.wheelDelta;
-
-		} else if ( event.detail ) { // Firefox
-
-			delta = event.detail * 10;
-
-		}
-
-		scope.zoom( new THREE.Vector3( 0, 0, delta ) );
+		scope.zoom( new THREE.Vector3( 0, 0, event.deltaY ) );
 
 	}
 
-	domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+	function contextmenu( event ) {
+
+		event.preventDefault();
+
+	}
+
+	this.dispose = function() {
+
+		domElement.removeEventListener( 'contextmenu', contextmenu, false );
+		domElement.removeEventListener( 'mousedown', onMouseDown, false );
+		domElement.removeEventListener( 'wheel', onMouseWheel, false );
+
+		domElement.removeEventListener( 'mousemove', onMouseMove, false );
+		domElement.removeEventListener( 'mouseup', onMouseUp, false );
+		domElement.removeEventListener( 'mouseout', onMouseUp, false );
+		domElement.removeEventListener( 'dblclick', onMouseUp, false );
+
+		domElement.removeEventListener( 'touchstart', touchStart, false );
+		domElement.removeEventListener( 'touchmove', touchMove, false );
+
+	};
+
+	domElement.addEventListener( 'contextmenu', contextmenu, false );
 	domElement.addEventListener( 'mousedown', onMouseDown, false );
-	domElement.addEventListener( 'mousewheel', onMouseWheel, false );
-	domElement.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
+	domElement.addEventListener( 'wheel', onMouseWheel, false );
 
 	// touch
 
@@ -249,12 +248,14 @@ THREE.EditorControls = function ( object, domElement ) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var getClosest = function( touch, touches ) {
+		function getClosest( touch, touches ) {
 
 			var closest = touches[ 0 ];
 
 			for ( var i in touches ) {
-				if ( closest.distanceTo(touch) > touches[ i ].distanceTo(touch) ) closest = touches[ i ];
+
+				if ( closest.distanceTo( touch ) > touches[ i ].distanceTo( touch ) ) closest = touches[ i ];
+
 			}
 
 			return closest;
@@ -266,7 +267,7 @@ THREE.EditorControls = function ( object, domElement ) {
 			case 1:
 				touches[ 0 ].set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY, 0 );
 				touches[ 1 ].set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY, 0 );
-				scope.rotate( touches[ 0 ].sub( getClosest( touches[ 0 ] ,prevTouches ) ).multiplyScalar( - 0.005 ) );
+				scope.rotate( touches[ 0 ].sub( getClosest( touches[ 0 ], prevTouches ) ).multiplyScalar( - 0.005 ) );
 				break;
 
 			case 2:
@@ -277,10 +278,10 @@ THREE.EditorControls = function ( object, domElement ) {
 				prevDistance = distance;
 
 
-				var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ] ,prevTouches ) );
-				var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ] ,prevTouches ) );
-				offset0.x = -offset0.x;
-				offset1.x = -offset1.x;
+				var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ], prevTouches ) );
+				var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ], prevTouches ) );
+				offset0.x = - offset0.x;
+				offset1.x = - offset1.x;
 
 				scope.pan( offset0.add( offset1 ).multiplyScalar( 0.5 ) );
 

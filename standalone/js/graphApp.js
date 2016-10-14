@@ -11,6 +11,7 @@ var SELECTED_COLOR = 0xcc00cc;
 var FILTERED_COLOR = 0xffff66;
 var HIGHLIGHTED_COLOR = 0xcc00cc;
 
+var lookAtScene = true;
 
 //initGraph();
 // animate();
@@ -23,12 +24,42 @@ var GlassCastSettings = function (json){
   this.subCategory = "ALL";
 
 }
+
+//Camera functions
+function setFov( fov ) {
+        camera.setFov( fov );
+        document.getElementById('fov').innerHTML = 'FOV '+ fov.toFixed(2) +'&deg;' ;
+      }
+function setLens( lens ) {
+  // try adding a tween effect while changing focal length, and it'd be even cooler!
+  var fov = camera.setLens( lens );
+  document.getElementById('fov').innerHTML = 'Converted ' + lens + 'mm lens to FOV '+ fov.toFixed(2) +'&deg;' ;
+}
+function setOrthographic() {
+  camera.toOrthographic();
+  document.getElementById('fov').innerHTML = 'Orthographic mode' ;
+}
+function setPerspective() {
+  camera.toPerspective();
+  document.getElementById('fov').innerHTML = 'Perspective mode' ;
+}
+
 function onDocumentMouseDown( event ) {
 
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
 
-		raycaster.setFromCamera( mouse, camera );
+    //Trick to support CombinedCamera
+    var tempCamera; 
+    if ( camera instanceof THREE.CombinedCamera ) {
+        if( camera.inPerspectiveMode ) {
+            tempCamera = camera.cameraP;
+        } else if ( camera.inOrthographicMode ) {
+            tempCamera = camera.cameraO;
+        }
+    }
+
+    raycaster.setFromCamera( mouse, tempCamera );
 
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
@@ -105,7 +136,17 @@ function onDocumentMouseMove( event ) {
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
 
-		raycaster.setFromCamera( mouse, camera );
+    //Trick to support CombinedCamera
+    var tempCamera; 
+    if ( camera instanceof THREE.CombinedCamera ) {
+        if( camera.inPerspectiveMode ) {
+            tempCamera = camera.cameraP;
+        } else if ( camera.inOrthographicMode ) {
+            tempCamera = camera.cameraO;
+        }
+    }
+
+		raycaster.setFromCamera( mouse, tempCamera );
 
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
@@ -140,6 +181,7 @@ function initGraph(scrappedJson){
   // $('body').removeAttr("overflow");
   // $('html').removeAttr("overflow");
   $('#landingPage').hide();
+  $('#cameraSettings').show();
   container = document.getElementById("entireWebsiteContainer");
   // $(container).empty();
 
@@ -151,12 +193,7 @@ function initGraph(scrappedJson){
 	scene.fog=new THREE.Fog( 0x00000, 0, 6000 );
 
 
-  //CAMERAS
-	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 8000 );
-		camera.position.z = 3000;
-		camera.position.y = 10;
-		camera.position.x = 0;
-
+  
 
   //RENDERER
 	renderer = new THREE.WebGLRenderer();
@@ -170,7 +207,27 @@ function initGraph(scrappedJson){
 	raycaster = new THREE.Raycaster(); // create once
 	mouse = new THREE.Vector2(); // create once
 
-	//CONTROLS
+	
+  //CAMERAS
+  // camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 8000 );
+
+  // camera = new THREE.OrthographicCamera( window.innerWidth / - 2, 
+  //                                        window.innerWidth / 2, 
+  //                                        window.innerHeight / 2, 
+  //                                        window.innerHeight / - 2, 
+  //                                        1, 8000 );
+  camera = new THREE.CombinedCamera( window.innerWidth / 2, window.innerHeight / 2,
+                                     70, 
+                                     1, 
+                                     8000, 
+                                     1, 8000 );
+    camera.position.z = 3000;
+    camera.position.y = 10;
+    camera.position.x = 0;
+    // camera.zoom = 6.0;
+    // camera.updateProjectionMatrix();
+
+  //CONTROLS
 	controls = new THREE.FlyControls( camera, container ); //For textboxes in HTMl to work
 		controls.movementSpeed = 400;
 		controls.domElement = container;
@@ -180,8 +237,7 @@ function initGraph(scrappedJson){
 	//controls.target.set( 0, 0, 0 );
 
 	//GRID HELPER
-	var helper = new THREE.GridHelper(100, 5 );
-		helper.setColors( 0x0000ff, 0x808080 );
+	var helper = new THREE.GridHelper(100, 5, 0x0000ff, 0x808080 );
 		helper.position.y = 0;
 	scene.add( helper );
 
@@ -190,7 +246,9 @@ function initGraph(scrappedJson){
       var WIDTH = window.innerWidth,
           HEIGHT = window.innerHeight;
       renderer.setSize(WIDTH, HEIGHT);
+      
       camera.aspect = WIDTH / HEIGHT;
+      camera.setSize( WIDTH, HEIGHT );
       camera.updateProjectionMatrix();
 
     });
@@ -430,10 +488,11 @@ function render() {
 	var delta = clock.getDelta();
 	var time = Date.now() * 0.00005;
 
-  	controls.update( delta );
-  	requestAnimationFrame( render );
+	controls.update( delta );
+  if ( lookAtScene ) camera.lookAt( scene.position );
+	requestAnimationFrame( render );
 
-	  renderer.render( scene, camera );
+  renderer.render( scene, camera );
 }
 
 CanvasRenderingContext2D.prototype.clear =
