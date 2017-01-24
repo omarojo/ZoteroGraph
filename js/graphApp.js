@@ -1,5 +1,3 @@
-
-
 var clock = new THREE.Clock();
 
 var scene, camera, renderer;
@@ -11,7 +9,6 @@ var SELECTED_COLOR = 0xcc00cc;
 var FILTERED_COLOR = 0xffff66;
 var HIGHLIGHTED_COLOR = 0xcc00cc;
 
-var lookAtScene = true;
 
 //initGraph();
 // animate();
@@ -19,47 +16,17 @@ var lookAtScene = true;
 var nodes, edges, jsonReport;
 
 var GlassCastSettings = function (json){
-  
+
   this.category = "ALL";//["A","B","C","D"];
   this.subCategory = "ALL";
 
 }
-
-//Camera functions
-function setFov( fov ) {
-        camera.setFov( fov );
-        document.getElementById('fov').innerHTML = 'FOV '+ fov.toFixed(2) +'&deg;' ;
-      }
-function setLens( lens ) {
-  // try adding a tween effect while changing focal length, and it'd be even cooler!
-  var fov = camera.setLens( lens );
-  document.getElementById('fov').innerHTML = 'Converted ' + lens + 'mm lens to FOV '+ fov.toFixed(2) +'&deg;' ;
-}
-function setOrthographic() {
-  camera.toOrthographic();
-  document.getElementById('fov').innerHTML = 'Orthographic mode' ;
-}
-function setPerspective() {
-  camera.toPerspective();
-  document.getElementById('fov').innerHTML = 'Perspective mode' ;
-}
-
 function onDocumentMouseDown( event ) {
 
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
 
-    //Trick to support CombinedCamera
-    var tempCamera; 
-    if ( camera instanceof THREE.CombinedCamera ) {
-        if( camera.inPerspectiveMode ) {
-            tempCamera = camera.cameraP;
-        } else if ( camera.inOrthographicMode ) {
-            tempCamera = camera.cameraO;
-        }
-    }
-
-    raycaster.setFromCamera( mouse, tempCamera );
+		raycaster.setFromCamera( mouse, camera );
 
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
@@ -67,14 +34,14 @@ function onDocumentMouseDown( event ) {
             // intersects[ 0 ].object.material.color.setHex( Math.random() * DEFAULT_COLOR );
             intersects.forEach(function(element,index){
             	if(element.object.userData.info != undefined && element.object != undefined){
-            		
+
 	            	//console.log(element.object.userData.info);
 
 	                //Set back to default colors
 	                if(selectedObject != element && selectedObject != undefined){
 	                  selectedObject.object.material.color.setHex(DEFAULT_COLOR);
 	    			  if(selectedObject.object.userData.info.filterColor != undefined){
-	    			  	selectedObject.object.material.color.setHex(selectedObject.object.userData.info.filterColor);	
+	    			  	selectedObject.object.material.color.setHex(selectedObject.object.userData.info.filterColor);
 	    			  }
 	                  //Lines color
 	                  selectedObject.object.userData.info.links.forEach(function(line){
@@ -119,34 +86,24 @@ function onDocumentMouseMove( event ) {
     	if(selectedObject != undefined){
     		if(highlightedObject.object.userData.info.id != selectedObject.object.userData.info.id) //only color gray if its not the selected one
     		{
-    			highlightedObject.object.material.color.setHex(DEFAULT_COLOR);	
+    			highlightedObject.object.material.color.setHex(DEFAULT_COLOR);
     			if(highlightedObject.object.userData.info.filterColor != undefined){
-    				highlightedObject.object.material.color.setHex(highlightedObject.object.userData.info.filterColor);	
+    				highlightedObject.object.material.color.setHex(highlightedObject.object.userData.info.filterColor);
     			}
     		}
     	}else{
     		highlightedObject.object.material.color.setHex(DEFAULT_COLOR);
     		if(highlightedObject.object.userData.info.filterColor != undefined){
-    				highlightedObject.object.material.color.setHex(highlightedObject.object.userData.info.filterColor);	
-    		}	
+    				highlightedObject.object.material.color.setHex(highlightedObject.object.userData.info.filterColor);
+    		}
     	}
-    	
+
     }
 
     mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
 
-    //Trick to support CombinedCamera
-    var tempCamera; 
-    if ( camera instanceof THREE.CombinedCamera ) {
-        if( camera.inPerspectiveMode ) {
-            tempCamera = camera.cameraP;
-        } else if ( camera.inOrthographicMode ) {
-            tempCamera = camera.cameraO;
-        }
-    }
-
-		raycaster.setFromCamera( mouse, tempCamera );
+		raycaster.setFromCamera( mouse, camera );
 
 		var intersects = raycaster.intersectObjects( scene.children );
         // Change color if hit block
@@ -181,7 +138,6 @@ function initGraph(scrappedJson){
   // $('body').removeAttr("overflow");
   // $('html').removeAttr("overflow");
   $('#landingPage').hide();
-  $('#cameraSettings').show();
   container = document.getElementById("entireWebsiteContainer");
   // $(container).empty();
 
@@ -193,7 +149,12 @@ function initGraph(scrappedJson){
 	scene.fog=new THREE.Fog( 0x00000, 0, 6000 );
 
 
-  
+  //CAMERAS
+	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 8000 );
+		camera.position.z = 3000;
+		camera.position.y = 10;
+		camera.position.x = 0;
+
 
   //RENDERER
 	renderer = new THREE.WebGLRenderer();
@@ -207,27 +168,7 @@ function initGraph(scrappedJson){
 	raycaster = new THREE.Raycaster(); // create once
 	mouse = new THREE.Vector2(); // create once
 
-	
-  //CAMERAS
-  // camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 8000 );
-
-  // camera = new THREE.OrthographicCamera( window.innerWidth / - 2, 
-  //                                        window.innerWidth / 2, 
-  //                                        window.innerHeight / 2, 
-  //                                        window.innerHeight / - 2, 
-  //                                        1, 8000 );
-  camera = new THREE.CombinedCamera( window.innerWidth / 2, window.innerHeight / 2,
-                                     70, 
-                                     1, 
-                                     8000, 
-                                     1, 8000 );
-    camera.position.z = 3000;
-    camera.position.y = 10;
-    camera.position.x = 0;
-    // camera.zoom = 6.0;
-    // camera.updateProjectionMatrix();
-
-  //CONTROLS
+	//CONTROLS
 	controls = new THREE.FlyControls( camera, container ); //For textboxes in HTMl to work
 		controls.movementSpeed = 400;
 		controls.domElement = container;
@@ -237,7 +178,8 @@ function initGraph(scrappedJson){
 	//controls.target.set( 0, 0, 0 );
 
 	//GRID HELPER
-	var helper = new THREE.GridHelper(100, 5, 0x0000ff, 0x808080 );
+	var helper = new THREE.GridHelper(100, 5 );
+		helper.setColors( 0x0000ff, 0x808080 );
 		helper.position.y = 0;
 	scene.add( helper );
 
@@ -246,9 +188,7 @@ function initGraph(scrappedJson){
       var WIDTH = window.innerWidth,
           HEIGHT = window.innerHeight;
       renderer.setSize(WIDTH, HEIGHT);
-      
       camera.aspect = WIDTH / HEIGHT;
-      camera.setSize( WIDTH, HEIGHT );
       camera.updateProjectionMatrix();
 
     });
@@ -300,7 +240,7 @@ function initGraph(scrappedJson){
     }else{
       var subCats = jsonReport.categories[value];
       subCats.unshift("ALL");
-      guiSubCatController = gui.add(settingsObject, 'subCategory', subCats );  
+      guiSubCatController = gui.add(settingsObject, 'subCategory', subCats );
       gui.__controllers[1].__select.selectedIndex = 0;
       settingsObject.subCategory = "ALL";
     }
@@ -310,7 +250,7 @@ function initGraph(scrappedJson){
 
     });
     dyeNodesForFilter();
-    
+
   });
 
   render();
@@ -334,18 +274,18 @@ function dyeNodesForFilter(){
 		nodes.forEach(function( sphere ) {
 			sphere.userData.info.filterColor = null;
 			sphere.material.color.setHex(DEFAULT_COLOR);
-		});		
+		});
 	}else{
     var tempRandomColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
 		nodes.forEach(function( sphere ) {
 			if(sphere.userData.info.categories[selectedCat] != "-" && selectedSubCat == "ALL"){
 				    sphere.userData.info.filterColor = tempRandomColor;
-	        	sphere.material.color.setHex(tempRandomColor);		
+	        	sphere.material.color.setHex(tempRandomColor);
 			}
 			if(selectedSubCat != "ALL" && selectedSubCat == sphere.userData.info.categories[selectedCat] ){
 				    sphere.userData.info.filterColor = tempRandomColor;
-	        	sphere.material.color.setHex(tempRandomColor);			
-			}    
+	        	sphere.material.color.setHex(tempRandomColor);
+			}
 		});
 	}
 
@@ -488,11 +428,10 @@ function render() {
 	var delta = clock.getDelta();
 	var time = Date.now() * 0.00005;
 
-	controls.update( delta );
-  if ( lookAtScene ) camera.lookAt( scene.position );
-	requestAnimationFrame( render );
+  	controls.update( delta );
+  	requestAnimationFrame( render );
 
-  renderer.render( scene, camera );
+	  renderer.render( scene, camera );
 }
 
 CanvasRenderingContext2D.prototype.clear =
