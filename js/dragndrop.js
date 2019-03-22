@@ -55,7 +55,7 @@ $().ready(function() {
 
         var rId = $(element)
           .attr("id")
-          .split("-")[1];
+          .split("_")[1];
         var rTitle = $(element)
           .children()
           .first()
@@ -100,6 +100,7 @@ $().ready(function() {
         reference.tags = [];
         reference.categories = { A: "-", B: "-", C: "-", D: "-" }; //Defaults
         //Create Tags and Categories
+        console.log(reference.name);
         var tagsUL = $(element).find('ul[class*="tags"]');
         tagsUL.children().each(function(index, relObject) {
           //console.log($(relObject));
@@ -107,9 +108,14 @@ $().ready(function() {
           var cat = $(relObject).text();
           reference.tags.push($(relObject).text());
           var cKey = cat.substring(0, 1); //ie. A
+
+          if (cKey != "A" && cKey != "B" && cKey != "C" && cKey != "D") {
+            return; //Is probably the Tags in the "Notes" property that we dont care i.e. _RSImport
+          }
           var cValue = cat.substring(3, cat.length); //ie Psychology
           reference.categories[cKey] = cValue;
           //Save Global Categories
+          console.log(cKey);
           var isInCategorie = json.categories[cKey].indexOf(cValue) > -1; //true if the value is already in the array of Categories
           if (isInCategorie == false && cValue != "-") {
             //dont save the category if its -
@@ -118,7 +124,7 @@ $().ready(function() {
         });
 
         //Create Links/Edges
-        var relatedItems = $(element).find('ul > li[id|="related"]'); // > li[id|="related"]
+        var relatedItems = $(element).find('ul[class="related"] > li'); // > li[id|="related"]
         relatedItems.each(function(index, relObject) {
           // console.log($(relObject).html());
 
@@ -127,7 +133,7 @@ $().ready(function() {
           link.source = referenceCounter; //rId;
           var tempIdArray = $(relObject)
             .attr("id")
-            .split("-");
+            .split("_");
           link.target_id = tempIdArray[1];
           link.target = null; //$(relObject).attr('id');
           link.title = $(relObject).text();
